@@ -64,3 +64,8 @@ function derive_p(P) {
 	}
 	return format_p(P_derive);
 }
+
+// Fonction qui permet d'évaluer un polynome
+function eval_p(P, x) {
+	return P.map((a, i) => a * Math.pow(x, i)).reduce((a, b) => a + b);
+}
