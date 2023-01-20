@@ -1,5 +1,6 @@
 n_points = window.innerWidth / 3;
 point_radius = 5;
+click_radius = 7;
 
 //Kc maths au pire
 function L(array_x, i, x) {
@@ -44,6 +45,7 @@ function draw_function(f, dx) {
 
 function eval_and_draw(f, dx)
 {
+    f = [];
     for (let i = 0; i < n_points; i++) {
         let val = inter_Lagrange(xi, yi, dx[i]);
         f.push(val);
@@ -68,6 +70,22 @@ function generate_dx() {
     return out;
 }
 
+//Verifie si (x, y) est à une distance inférieure à distance d'un des points
+function point_proche(x, y, array_x, array_y, distance)
+{
+    for (let i = 0; i < array_x.length; i++)
+    {
+        //On calcule la distance au carré
+        let dist_x = x - array_x[i];
+        let dist_y = y - array_y[i];
+        let sqrdist = dist_x*dist_x + dist_y*dist_y;
+
+        if (sqrdist <= distance*distance)
+            return i;
+    }
+    return -1;
+}
+
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
 
@@ -82,7 +100,15 @@ held_point = -1;
 is_holding = false;
 
 window.onmousedown = e => {
-    if (!xi.includes(e.x)) {
+    //Permet de supprimer un point en cliquant dessus
+    let i = point_proche(e.x, window.innerHeight - e.y, xi, yi, click_radius);
+    if (i != -1)
+    {
+        xi.splice(i, 1);
+        yi.splice(i, 1);
+        eval_and_draw(f, dx);
+    }
+    else if (!xi.includes(e.x)) {
         is_holding = true;
         held_point = xi.length;
         xi.push(e.x);
@@ -91,14 +117,12 @@ window.onmousedown = e => {
 }
 
 window.onmousemove = e => {
-    if (held_point != -1 && is_holding)
+    if (is_holding)
     {
-        f = []
         point(e.x, e.y);
 
         xi[held_point] = e.x;
         yi[held_point] = window.innerHeight - e.y;
-        f = []
         eval_and_draw(f, dx);
     }
 }
@@ -109,7 +133,6 @@ window.onmouseup = e => {
     }
 
     held_point = -1;
-    eval_and_draw(f, dx);
     is_holding = false;
-    f = []
+    eval_and_draw(f, dx);
 }
