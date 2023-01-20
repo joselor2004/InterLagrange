@@ -1,7 +1,7 @@
 // -----------------------------------------------------------------------------
 // Les paramètres constants sont définie dans le fichier config.js
-// 
-// Les fonctions pour faire les opérations sur les polynomes 
+//
+// Les fonctions pour faire les opérations sur les polynomes
 // sont dans le fichier polynome.js
 //
 // -----------------------------------------------------------------------------
@@ -77,7 +77,7 @@ function eval_and_draw(f, dx) {
 	ctx.strokeStyle = "white";
 	draw_function(f, dx);
 	for (let i = 0; i < xi.length; i += 1) {
-		if (held_point == i)
+		if (held == i)
 			ctx.fillStyle = "red";
 		else
 			ctx.fillStyle = "white";
@@ -127,7 +127,6 @@ window.onmousedown = e => {
             console.log("je prend le controle de " + i);
         }
     }
-
 
     if (!is_holding && !xi.includes(e.x)) {
         is_holding = true;
