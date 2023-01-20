@@ -26,13 +26,19 @@ function L(array_x, i) {
 
 // Interpolation de lagrange
 function inter_Lagrange(array_x, array_y, x) {
-	let sum = 0;
+	let sumProd = [0];
 
 	for (let k = 0; k < array_x.length; k++) {
-		const poly = L(array_x, k);
-		sum += array_y[k] * eval_p(poly, x);
+		let poly = L(array_x, k);
+		poly = produit_p([
+			[array_y[k]], // Constante
+			poly
+		])
+
+		sumProd = somme_p([npoly, sumProd]); // On ajoute tout les polynome (on en fait qu'un)
 	}
-	return sum;
+
+	return eval_p(sumProd, x);
 }
 
 // Permet d'afficher un point
