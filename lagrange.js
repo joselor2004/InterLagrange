@@ -79,9 +79,11 @@ xi = [];
 yi = [];
 dx = generate_dx();
 held_point = -1;
+is_holding = false;
 
 window.onmousedown = e => {
     if (!xi.includes(e.x)) {
+        is_holding = true;
         held_point = xi.length;
         xi.push(e.x);
         yi.push(window.innerHeight - e.y);
@@ -89,7 +91,7 @@ window.onmousedown = e => {
 }
 
 window.onmousemove = e => {
-    if (held_point != -1)
+    if (held_point != -1 && is_holding)
     {
         f = []
         point(e.x, e.y);
@@ -102,7 +104,12 @@ window.onmousemove = e => {
 }
 
 window.onmouseup = e => {
+    if (!is_holding) {
+        return false;
+    }
+
     held_point = -1;
-    f = []
     eval_and_draw(f, dx);
+    is_holding = false;
+    f = []
 }
