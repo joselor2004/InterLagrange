@@ -6,10 +6,9 @@
 //
 // -----------------------------------------------------------------------------
 
-
-
+// Polynômes formels
 // Interpolateur
-function L(array_x, i) {
+function L_poly(array_x, i) {
 	const polynomes = array_x.map(k => {
 		if (array_x[i] === k) {
 			return [1]; // Polynome constant = 1
@@ -25,12 +24,12 @@ function L(array_x, i) {
 }
 
 // Interpolation de lagrange
-function inter_Lagrange(array_x, array_y, x) {
+function inter_Lagrange_poly(array_x, array_y, x) {
 	let sumProd = [0];
 
 	for (let k = 0; k < array_x.length; k++)
 	{
-		let poly = L(array_x, k);
+		let poly = L_poly(array_x, k);
 		poly = produit_p([
 			[array_y[k]], // Constante
 			poly
@@ -39,7 +38,28 @@ function inter_Lagrange(array_x, array_y, x) {
 		sumProd = somme_p([poly, sumProd]); // On ajoute tout les polynome (on en fait qu'un)
 	}
 
-	return eval_p(sumProd, x);
+	return sumProd;
+}
+
+// Fonctions polynomiales
+// Interpolateur
+function L(array_x, i, x) {
+    let prod = 1;
+    for (let k = 0; k < array_x.length; k++) {
+        if (k != i) {
+            prod *= (x - array_x[k]) / (array_x[i] - array_x[k]);
+        }
+    }
+    return prod;
+}
+
+// Lagrange
+function inter_Lagrange(array_x, array_y, x) {
+    let sum = 0;
+    for (let k = 0; k < array_x.length; k++) {
+        sum += array_y[k] * L(array_x, k, x);
+    }
+    return sum;
 }
 
 // Permet d'afficher un point
@@ -76,8 +96,8 @@ function eval_and_draw(f, dx) {
 
 	ctx.strokeStyle = "white";
 	draw_function(f, dx);
-	for (let i = 0; i < xi.length; i += 1) {
-		if (held == i)
+	for (let i = 0; i < xi.length; i++) {
+		if (held_point == i)
 			ctx.fillStyle = "red";
 		else
 			ctx.fillStyle = "white";
@@ -154,4 +174,5 @@ window.onmouseup = e => {
 
     held_point = -1;
     is_holding = false;
+	eval_and_draw(f, dx);
 }
