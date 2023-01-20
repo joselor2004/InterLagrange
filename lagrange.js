@@ -35,7 +35,7 @@ function inter_Lagrange(array_x, array_y, x) {
 			poly
 		])
 
-		sumProd = somme_p([npoly, sumProd]); // On ajoute tout les polynome (on en fait qu'un)
+		sumProd = somme_p([poly, sumProd]); // On ajoute tout les polynome (on en fait qu'un)
 	}
 
 	return eval_p(sumProd, x);
