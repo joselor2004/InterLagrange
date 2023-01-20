@@ -81,8 +81,26 @@ dx = generate_dx();
 held_point = -1;
 is_holding = false;
 
+function distance_euclidienne(x1, y1, x2, y2) {
+    return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
+}
+
 window.onmousedown = e => {
-    if (!xi.includes(e.x)) {
+    let n = xi.length;
+
+    // attraper un point déjà posé
+    for(let i = 0; i < n; i++) {
+        let d = distance_euclidienne(xi[i], yi[i], e.x, window.innerHeight - e.y);
+        console.log(d);
+        if (d < 5 && !xi.includes(e.x)) {
+            held_point = i;
+            is_holding = true;
+            console.log("je prend le controle de " + i);
+        }
+    }
+
+
+    if (!is_holding && !xi.includes(e.x)) {
         is_holding = true;
         held_point = xi.length;
         xi.push(e.x);
@@ -104,6 +122,7 @@ window.onmousemove = e => {
 }
 
 window.onmouseup = e => {
+
     if (!is_holding) {
         return false;
     }
