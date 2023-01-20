@@ -75,7 +75,7 @@ function eval_and_draw(f, dx) {
 	ctx.strokeStyle = "white";
 	draw_function(f, dx);
 	for (let i = 0; i < xi.length; i += 1) {
-		if (held_point == i)
+		if (held == i)
 			ctx.fillStyle = "red";
 		else
 			ctx.fillStyle = "white";
@@ -92,45 +92,18 @@ function generate_dx() {
 	return out;
 }
 
+let dx = generate_dx();
+
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-let f = [];
-let xi = [];
-let yi = [];
-let dx = generate_dx();
-let held_point = -1;
-let is_holding = false;
-
-function distance_euclidienne(x1, y1, x2, y2) {
+function dist(x1, y1, x2, y2) {
     return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
 }
 
-window.onmousedown = e => {
-    let n = xi.length;
-
-    // attraper un point déjà posé
-    for(let i = 0; i < n; i++) {
-        let d = distance_euclidienne(xi[i], yi[i], e.x, window.innerHeight - e.y);
-        console.log(d);
-        if (d < POINT_RADIUS && !xi.includes(e.x)) {
-            held_point = i;
-            is_holding = true;
-            console.log("je prend le controle de " + i);
-        }
-    }
-
-
-    if (!is_holding && !xi.includes(e.x)) {
-        is_holding = true;
-        held_point = xi.length;
-        xi.push(e.x);
-        yi.push(window.innerHeight - e.y);
-    }
-}
 
 function x_exist(x) {
     let n = xi.length;
@@ -142,35 +115,53 @@ function x_exist(x) {
     }
 }
 
+function save_x(x) {
+    let d = 0;
+
+    while (x_exist(x + d)) {
+	d++;
+    }
+
+    if (d > 0)
+	console.log("saved.");
+
+    return d;
+}
+
+
+window.onmousedown = e => {
+    let n = xi.length;
+    let x = e.x + save_x(e.x);
+    let y = window.innerHeight - e.y;
+
+    // attraper un point déjà posé
+    for(let i = 0; i < n; i++) {
+        if (dist(xi[i], yi[i], x, y) < POINT_RADIUS) {
+            held = i;
+        }
+    }
+
+
+    held = held < 0 ? n : held;
+    xi.push(x);
+    yi.push(y);
+}
+
 window.onmousemove = e => {
+    let x = e.x + save_x(e.x);
+    let y = window.innerHeight - e.y;
 
-	let d = 0;
-
-	// impossible de détruire l'application
-	// NE PAS TOUCHER
-	while (is_holding && x_exist(e.x + d)) {
-	    d++;
-	}
-
-	if (held_point != -1 && is_holding) {
-		f = []
-		point(e.x + d, e.y);
-
-		xi[held_point] = e.x + d;
-		yi[held_point] = window.innerHeight - e.y;
-		f = []
-		eval_and_draw(f, dx);
-	}
+    if (held != -1) {
+	f = []
+	point(x, y);
+	xi[held] = x
+	yi[held] = y;
+	eval_and_draw(f, dx);
+    }
 }
 
 window.onmouseup = e => {
-
-    if (!is_holding) {
-        return false;
-    }
-
-    held_point = -1;
+    held = -1;
     eval_and_draw(f, dx);
-    is_holding = false;
     f = []
 }
