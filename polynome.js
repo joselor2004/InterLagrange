@@ -2,6 +2,7 @@
 // et qui renvoie le Polynome formaté
 function format_p(P) {
 	let P_format = P;
+	if (P = undefined || P === [0]) return [0];
 	while (P_format[P_format.length - 1] == 0) {
 		P_format.pop();
 	}
