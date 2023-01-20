@@ -34,6 +34,15 @@ function somme_p(array_p) {
 	return format_p(somme);
 }
 
+//Permet, si l'on tente d'accéder à un indice supérieur au degré du polynôme
+//de renvoyer 0 ( définition )
+function poly_infini(P, i)
+{
+	if (i >= P.length)
+		return 0;
+	return P[i];
+}
+
 // Fonction qui prend en paramètre un tableau de polynomes
 // et qui renvoie le produit de ces polynomes
 function produit_p(array_p) {
@@ -43,11 +52,15 @@ function produit_p(array_p) {
 	// Fonction qui permet de multiplier deux polynomes
 	function produit_p2(P1, P2) {
 		let produit = new Array(P1.length + P2.length - 1).fill(0);
-		for (let i = 0; i < P1.length; i++) {
-			for (let j = 0; j < P2.length; j++) {
-				produit[i + j] = produit[i + j] + P1[i] * P2[j];
-			}
+		for (let i = 0; i < produit.length; i++)
+		{
+			let convolution = 0;
+			for (let k = 0; k <= i; k++)
+				convolution += poly_infini(P1, k) * poly_infini(P2, i - k);
+			
+			produit[i] = convolution;
 		}
+
 		return format_p(produit);
 	}
 
