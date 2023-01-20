@@ -1,71 +1,89 @@
-n_points = window.innerWidth / 3;
-point_radius = 5;
+// -----------------------------------------------------------------------------
+// Les paramètres constants sont définie dans le fichier config.js
+// 
+// Les fonctions pour faire les opérations sur les polynomes 
+// sont dans le fichier polynome.js
+//
+// -----------------------------------------------------------------------------
 
-//Kc maths au pire
-function L(array_x, i, x) {
-    let prod = 1;
-    for (let k = 0; k < array_x.length; k++) {
-        if (k != i) {
-            prod *= (x - array_x[k]) / (array_x[i] - array_x[k]);
-        }
-    }
-    return prod;
+
+
+// Interpolateur
+function L(array_x, i) {
+	const polynomes = array_x.map(k => {
+		if (array_x[i] === k) {
+			return [1]; // Polynome constant = 1
+		}
+
+		return [
+			-k / (array_x[i] - k), 		// Coefficient de X^0
+			1 / (array_x[i] - k)		// Coefficient de X^1
+		]								// (X^0 - k) / (array_x[i] - k);
+	});
+
+	return produit_p(polynomes); // Retourne le i-ieme polynomes interpolateurs de Lagrange
 }
 
+// Interpolation de lagrange
 function inter_Lagrange(array_x, array_y, x) {
-    let sum = 0;
-    for (let k = 0; k < array_x.length; k++) {
-        sum += array_y[k] * L(array_x, k, x);
-    }
-    return sum;
+	let sum = 0;
+
+	for (let k = 0; k < array_x.length; k++) {
+		const poly = L(array_x, k);
+		sum += array_y[k] * eval_p(poly, x);
+	}
+	return sum;
 }
 
+// Permet d'afficher un point
 function point(x, y) {
-    ctx.beginPath();
-    ctx.arc(x, y, point_radius, 0, 2 * Math.PI, true);
-    ctx.fill();
+	ctx.beginPath();
+	ctx.arc(x, y, POINT_RADIUS, 0, 2 * Math.PI, true);
+	ctx.fill();
 }
 
+// Permet d'afficher une ligne
 function draw_line(x, y, x2, y2) {
-    ctx.beginPath();
-    ctx.moveTo(x, window.innerHeight - y);
-    ctx.lineTo(x2, window.innerHeight - y2);
+	ctx.beginPath();
+	ctx.moveTo(x, window.innerHeight - y);
+	ctx.lineTo(x2, window.innerHeight - y2);
 
-    ctx.stroke();
+	ctx.stroke();
 }
 
+// Permet d'afficher une fonction
 function draw_function(f, dx) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    for (let i = 1; i < n_points; i++) {
-        draw_line(dx[i - 1], f[i - 1], dx[i], f[i]);
-
-    }
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	for (let i = 1; i < N_POINTS; i++) {
+		draw_line(dx[i - 1], f[i - 1], dx[i], f[i]);
+	}
 }
 
-function eval_and_draw(f, dx)
-{
-    for (let i = 0; i < n_points; i++) {
-        let val = inter_Lagrange(xi, yi, dx[i]);
-        f.push(val);
-    }
+// Permet de calculer et d'afficher la fonction
+function eval_and_draw(f, dx) {
+	for (let i = 0; i < N_POINTS; i++) {
+		let val = inter_Lagrange(xi, yi, dx[i]);
+		f.push(val);
+	}
 
-    ctx.strokeStyle = "white";
-    draw_function(f, dx);
-    for (let i = 0; i < xi.length; i += 1) {
-        if (held_point == i)
-            ctx.fillStyle = "red";
-        else
-            ctx.fillStyle = "white";
-        point(xi[i], window.innerHeight - yi[i]);
-    }
+	ctx.strokeStyle = "white";
+	draw_function(f, dx);
+	for (let i = 0; i < xi.length; i += 1) {
+		if (held_point == i)
+			ctx.fillStyle = "red";
+		else
+			ctx.fillStyle = "white";
+		point(xi[i], window.innerHeight - yi[i]);
+	}
 }
 
+// Permet de générer les abscisses
 function generate_dx() {
-    let out = [];
-    for (let i = 0; i < n_points; i++) {
-        out.push(window.innerWidth * i / n_points);
-    }
-    return out;
+	let out = [];
+	for (let i = 0; i < N_POINTS; i++) {
+		out.push(window.innerWidth * i / N_POINTS);
+	}
+	return out;
 }
 
 var canvas = document.getElementById('canvas');
@@ -74,12 +92,12 @@ var ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-f = [];
-xi = [];
-yi = [];
-dx = generate_dx();
-held_point = -1;
-is_holding = false;
+let f = [];
+let xi = [];
+let yi = [];
+let dx = generate_dx();
+let held_point = -1;
+let is_holding = false;
 
 function distance_euclidienne(x1, y1, x2, y2) {
     return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
@@ -92,7 +110,7 @@ window.onmousedown = e => {
     for(let i = 0; i < n; i++) {
         let d = distance_euclidienne(xi[i], yi[i], e.x, window.innerHeight - e.y);
         console.log(d);
-        if (d < 5 && !xi.includes(e.x)) {
+        if (d < POINT_RADIUS && !xi.includes(e.x)) {
             held_point = i;
             is_holding = true;
             console.log("je prend le controle de " + i);
@@ -109,16 +127,15 @@ window.onmousedown = e => {
 }
 
 window.onmousemove = e => {
-    if (held_point != -1 && is_holding)
-    {
-        f = []
-        point(e.x, e.y);
+	if (held_point != -1 && is_holding) {
+		f = []
+		point(e.x, e.y);
 
-        xi[held_point] = e.x;
-        yi[held_point] = window.innerHeight - e.y;
-        f = []
-        eval_and_draw(f, dx);
-    }
+		xi[held_point] = e.x;
+		yi[held_point] = window.innerHeight - e.y;
+		f = []
+		eval_and_draw(f, dx);
+	}
 }
 
 window.onmouseup = e => {
