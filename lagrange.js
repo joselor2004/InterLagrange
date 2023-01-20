@@ -115,7 +115,6 @@ window.onmousedown = e => {
     // attraper un point déjà posé
     for(let i = 0; i < n; i++) {
         let d = distance_euclidienne(xi[i], yi[i], e.x, window.innerHeight - e.y);
-        console.log(d);
         if (d < POINT_RADIUS && !xi.includes(e.x)) {
             held_point = i;
             is_holding = true;
