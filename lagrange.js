@@ -1,14 +1,6 @@
 n_points = window.innerWidth / 3;
 point_radius = 5;
 
-function abs(x)
-{
-    if (x <= 0)
-        return -x;
-    else
-        return x;
-}
-
 //Kc maths au pire
 function L(array_x, i, x) {
     let prod = 1;
@@ -89,9 +81,11 @@ dx = generate_dx();
 held_point = -1;
 
 window.onmousedown = e => {
-    held_point = xi.length;
-    xi.push(e.x);
-    yi.push(window.innerHeight - e.y);
+    if (!xi.includes(e.x)) {
+        held_point = xi.length;
+        xi.push(e.x);
+        yi.push(window.innerHeight - e.y);
+    }
 }
 
 window.onmousemove = e => {
@@ -99,7 +93,7 @@ window.onmousemove = e => {
     {
         f = []
         point(e.x, e.y);
-    
+
         xi[held_point] = e.x;
         yi[held_point] = window.innerHeight - e.y;
         f = []
