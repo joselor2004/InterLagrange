@@ -1,7 +1,7 @@
 // -----------------------------------------------------------------------------
 // Les paramètres constants sont définie dans le fichier config.js
-// 
-// Les fonctions pour faire les opérations sur les polynomes 
+//
+// Les fonctions pour faire les opérations sur les polynomes
 // sont dans le fichier polynome.js
 //
 // -----------------------------------------------------------------------------
@@ -132,12 +132,31 @@ window.onmousedown = e => {
     }
 }
 
+function x_exist(x) {
+    let n = xi.length;
+
+    for(let i = 0; i < n - 1; i++) {
+	if (xi[i] == x) {
+	    return true;
+	}
+    }
+}
+
 window.onmousemove = e => {
+
+	let d = 0;
+
+	// impossible de détruire l'application
+	// NE PAS TOUCHER
+	while (is_holding && x_exist(e.x + d)) {
+	    d++;
+	}
+
 	if (held_point != -1 && is_holding) {
 		f = []
-		point(e.x, e.y);
+		point(e.x + d, e.y);
 
-		xi[held_point] = e.x;
+		xi[held_point] = e.x + d;
 		yi[held_point] = window.innerHeight - e.y;
 		f = []
 		eval_and_draw(f, dx);
