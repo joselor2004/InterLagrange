@@ -36,8 +36,7 @@ function somme_p(array_p) {
 
 //Permet, si l'on tente d'accéder à un indice supérieur au degré du polynôme
 //de renvoyer 0 ( définition )
-function poly_infini(P, i)
-{
+function poly_infini(P, i) {
 	if (i >= P.length)
 		return 0;
 	return P[i];
@@ -52,12 +51,11 @@ function produit_p(array_p) {
 	// Fonction qui permet de multiplier deux polynomes
 	function produit_p2(P1, P2) {
 		let produit = new Array(P1.length + P2.length - 1).fill(0);
-		for (let i = 0; i < produit.length; i++)
-		{
+		for (let i = 0; i < produit.length; i++) {
 			let convolution = 0;
 			for (let k = 0; k <= i; k++)
 				convolution += poly_infini(P1, k) * poly_infini(P2, i - k);
-			
+
 			produit[i] = convolution;
 		}
 
@@ -82,4 +80,89 @@ function derive_p(P) {
 // Fonction qui permet d'évaluer un polynome
 function eval_p(P, x) {
 	return P.map((a, i) => a * Math.pow(x, i)).reduce((a, b) => a + b);
+}
+
+// j'ai fais ça très rapidement ça fonctionne
+// à peu près pareil que le code au dessus mais c'est
+// un peut plus organisé et surtout ya que 4 d'indentation
+// ça s'utilise différament donc j'ai pas touché polynome.js
+// pour ne pas tout casser mais ça sera mieux à utiliser plus tard
+class Polynomes {
+	constructor(coefs) {
+		this.coefs = coefs || [];
+	}
+
+	add(P) {
+		let n = P.coefs.length;
+		let deg = this.coefs.length - 1;
+
+		for (let i = 0; i < n; i++) {
+			if (i > deg) {
+				this.coefs.push(P.coefs[i]);
+			} else {
+				this.coefs[i] += P.coefs[i];
+			}
+		}
+	}
+
+	monome(coef, deg) {
+		let r = [];
+		for (let i = 0; i < deg - 1; i++) {
+			r.push(0);
+		}
+
+		r.push(coef);
+		return new Polynomes(r);
+	}
+
+	// pour faire une petit coiffure au polynome
+	trim() {
+		let i = this.coefs.length - 1;
+
+		while (this.coefs[i] == 0) {
+			this.coefs.pop();
+			i--;
+		}
+	}
+
+	inf(coef) {
+		return coef || 0;
+	}
+
+	mult(P) {
+		let r = new Polynomes();
+		let c = this.coefs;
+		let cp = P.coefs;
+
+		// convolution tu connais
+		for (let n = 0; n < c.length + cp.length; n++) {
+			for (let j = 0; j <= n; j++) {
+				let m = this.inf(c[j]) * this.inf(cp[n - j])
+				r.add(this.monome(m, n));
+			}
+		}
+
+		this.coefs = r.coefs;
+	}
+
+	derive() {
+		let n = this.coefs.length;
+
+		for (let i = 0; i < n - 1; i++) {
+			this.coefs[i] = this.coefs[i + 1] * (i + 1);
+		}
+
+		this.coefs.pop();
+	}
+
+	eval(x) {
+		let s = 0;
+		let c = this.coefs;
+
+		for (let i = 0; i < c.length; i++) {
+			s += c[i] * x ** i;
+		}
+
+		return s;
+	}
 }
