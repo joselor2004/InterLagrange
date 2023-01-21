@@ -27,7 +27,7 @@ function L_poly(array_x, i) {
 }
 
 // Interpolation de lagrange
-function inter_Lagrange_poly(array_x, array_y, x) {
+function inter_Lagrange_poly(array_x, array_y) {
 	let sumProd = [0];
 
 	for (let k = 0; k < array_x.length; k++)
@@ -81,31 +81,24 @@ function draw_line(x, y, x2, y2) {
 	ctx.stroke();
 }
 
-// Permet d'afficher une fonction
-function draw_function(f, dx) {
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	for (let i = 1; i < N_POINTS; i++) {
-		draw_line(dx[i - 1], f[i - 1], dx[i], f[i]);
-	}
-}
-
 // Permet de calculer et d'afficher la fonction
-function eval_and_draw(f, dx) {
-	f = []
-	for (let i = 0; i < N_POINTS; i++) {
-		let val = inter_Lagrange(xi, yi, dx[i]);
-		f.push(val);
-	}
+function eval_and_draw() {
+    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);   
+    for (let i = 1; i < N_POINTS; i++) {
+        // O(2 * NB) -> O(NB)
+        let a = inter_Lagrange(xi, yi, dx[i - 1]);
+        let b = inter_Lagrange(xi, yi, dx[i]);
+        draw_line(dx[i - 1], a, dx[i], b);
+    }
 
-	ctx.strokeStyle = "white";
-	draw_function(f, dx);
-	for (let i = 0; i < xi.length; i++) {
-		if (held == i)
-			ctx.fillStyle = "red";
-		else
-			ctx.fillStyle = "white";
-		point(xi[i], window.innerHeight - yi[i]);
-	}
+    ctx.strokeStyle = "white";
+    for (let i = 0; i < xi.length; i++) {
+            if (held == i)
+                ctx.fillStyle = "red";
+            else
+                ctx.fillStyle = "white";
+        point(xi[i], window.innerHeight - yi[i]);
+    }
 }
 
 // Permet de générer les abscisses
@@ -194,7 +187,7 @@ window.onmousedown = e => {
 	yi.push(y);
     }
 
-    eval_and_draw(f, dx);
+    eval_and_draw();
     is_holding = true;
 }
 
@@ -206,16 +199,16 @@ window.onmousemove = e => {
 	point(x, y);
 	xi[held] = save_x(e.x);
 	yi[held] = y;
-	eval_and_draw(f, dx);
+	eval_and_draw();
     }
 }
 
-window.onmouseup = e => {
+window.onmouseup = _ => {
     if (!is_holding) {
         return false;
     }
 
     held = -1;
     is_holding = false;
-    eval_and_draw(f, dx);
+    eval_and_draw();
 }
