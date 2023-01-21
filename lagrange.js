@@ -6,6 +6,9 @@
 //
 // -----------------------------------------------------------------------------
 
+// Regardez la honte le code d'alban avec 8
+// espaces d'indentation ahahhahahahahahahahahahahahhaahhahahah
+
 // Polynômes formels
 // Interpolateur
 function L_poly(array_x, i) {
@@ -34,7 +37,7 @@ function inter_Lagrange_poly(array_x, array_y, x) {
 			[array_y[k]], // Constante
 			poly
 		])
-		
+
 		sumProd = somme_p([poly, sumProd]); // On ajoute tout les polynome (on en fait qu'un)
 	}
 
@@ -97,7 +100,7 @@ function eval_and_draw(f, dx) {
 	ctx.strokeStyle = "white";
 	draw_function(f, dx);
 	for (let i = 0; i < xi.length; i++) {
-		if (held_point == i)
+		if (held == i)
 			ctx.fillStyle = "red";
 		else
 			ctx.fillStyle = "white";
@@ -124,47 +127,81 @@ let f = [];
 let xi = [];
 let yi = [];
 let dx = generate_dx();
-let held_point = -1;
+let held = -1;
 let is_holding = false;
 
 function distance_carre(x1, y1, x2, y2) {
     return (x1 - x2) ** 2 + (y1 - y2) ** 2;
 }
 
-window.onmousedown = e => {
-	let n = xi.length;
+// josé si tu retire ça encore je te retrouve
+// toi et toute ta famille. Cordialement Cyprien
+function save_x(x) {
+    let d = 0;
+    let n = xi.length;
 
-    // attraper un point déjà posé
+    function x_exist(x) {
+	for(let i = 0; i < n - 1; i++) {
+	    if (xi[i] == x) {
+		return true;
+	    }
+	}
+
+	return false;
+    }
+
+    while (x_exist(x + d)) {
+	d++;
+    }
+
+    return x + d;
+}
+
+function calibre(y) {
+    return window.innerHeight - y;
+}
+
+function catch_existing(x, y) {
+    let n = xi.length;
+
     for(let i = 0; i < n; i++) {
-		//La distance au carré est moins couteuse à calculer ( la racine carré c long )
-		//En plus on a puisque le carré est strictement croissant sur des positifs
-		//sqrt(d) < POINT_RADIUS <=> d < POINT_RADIUS**2
-        let d = distance_carre(xi[i], yi[i], e.x, window.innerHeight - e.y);
-		console.log(d);
-        if (d <= CLICK_RADIUS ** 2 && !xi.includes(e.x)) {
-            held_point = i;
-            is_holding = true;
-            console.log("je prend le controle de " + i);
-        }
+	// La distance au carré est moins couteuse à calculer ( la racine carré c long )
+	// En plus on a puisque le carré est strictement croissant sur des positifs
+	// sqrt(d) < POINT_RADIUS <=> d < POINT_RADIUS**2
+	let d = distance_carre(x, y, xi[i], yi[i]);
+	if (d <= CLICK_RADIUS ** 2) {
+	    is_holding = true;
+	    return i;
+	}
     }
 
-    if (!is_holding && !xi.includes(e.x)) {
-        is_holding = true;
-        held_point = xi.length;
-        xi.push(e.x);
-        yi.push(window.innerHeight - e.y);
-		eval_and_draw(f, dx);
+    return n;
+}
+
+window.onmousedown = e => {
+    let y = calibre(e.y);
+    let n = xi.length;
+    held = catch_existing(e.x, y);
+
+    if (held == n) {
+	xi.push(e.x);
+	yi.push(y);
     }
+
+    eval_and_draw(f, dx);
+    is_holding = true;
 }
 
 window.onmousemove = e => {
-	if (held_point != -1 && is_holding) {
-		point(e.x, e.y);
+    let x = save_x(e.x)
+    let y = window.innerHeight - e.y;
 
-		xi[held_point] = e.x;
-		yi[held_point] = window.innerHeight - e.y;
-		eval_and_draw(f, dx);
-	}
+    if (held >= 0 && is_holding) {
+	point(x, y);
+	xi[held] = save_x(e.x);
+	yi[held] = y;
+	eval_and_draw(f, dx);
+    }
 }
 
 window.onmouseup = e => {
@@ -172,7 +209,7 @@ window.onmouseup = e => {
         return false;
     }
 
-    held_point = -1;
+    held = -1;
     is_holding = false;
-	eval_and_draw(f, dx);
+    eval_and_draw(f, dx);
 }
