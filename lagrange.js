@@ -177,7 +177,7 @@ let boutons = [];
 let dx = generate_dx();
 let held = -1;
 let is_holding = false;
-let P;
+let P = new Polynomes([0]);
 
 boutons.push(new Bouton(70, 70, 70, 70, random_interpolation, "white"));
 draw_interface();
