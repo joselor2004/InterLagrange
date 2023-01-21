@@ -87,16 +87,21 @@ class Polynomes {
         let s = "";
         this.trim();
 
+        // cool ta vie la souffrance
+        // par contre j'ai changé ici pour qu'on affiche le coefficient
+        // même si l'arrondi de c donne 0, pour signifier que ces termes
+        // existent, même si petits + on affiche le signe
         for (let i = c.length - 1; i >= 0; i--) {
-            let cr = c[i].toFixed(4);
+            let cr = Math.abs(c[i].toFixed(4));
+            let signe = Math.sign(c[i]);
 
-            // à noter que le code suivant à été écrit
-            // dans une souffrance indescriptible que je ne
-            // souhaite à aucun homme.
-            s += cr != 0 ? cr : "";
-            s += cr != 0 && i != 0 ? "x" : "";
-            s += cr != 0 && i != 0 && i != 1 ? "^" + i : "";
-            s += cr != 0 && i > 0 ? " + " : "";
+            if (i == c.length - 1)
+                s += signe == 1 ? "" : "-";
+            else
+                s += signe == 1 ? " + " : " - ";
+            s += cr != 0 ? cr : 0;
+            s += i != 0 ? "x" : "";
+            s += i != 0 && i != 1 ? "^" + i : "";
 
             // note pour plus tard: ne plus utiliser java script
 
