@@ -120,9 +120,6 @@ function generate_dx() {
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
 let f = [];
 let xi = [];
 let yi = [];
@@ -133,6 +130,15 @@ let is_holding = false;
 function distance_carre(x1, y1, x2, y2) {
     return (x1 - x2) ** 2 + (y1 - y2) ** 2;
 }
+
+
+function set_size() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+
+set_size();
+window.onresize = _ => set_size();
 
 // josé si tu retire ça encore je te retrouve
 // toi et toute ta famille. Cordialement Cyprien
