@@ -9,6 +9,8 @@ body {
 	top: 0;
 	left: 0;
 	font-family: 'Roboto', sans-serif;
+	background-color: black;
+	z-index: 0;
 }
 
 .canvasDiv {
@@ -38,11 +40,13 @@ canvas {
 	background-color: white;
 	overflow-x: hidden;
 	transition: 330ms;
+	z-index: 1;
 }
 
 .panelContent {
 	width: 100%;
-	padding: 5px
+	padding: 5px;
+	z-index: 1;
 }
 
 .panelContent h1 {
@@ -124,10 +128,12 @@ canvas {
 }
 
 .line-menu {
-	background-color: #fff;
+	background-color: red;
 	border-radius: 5px;
 	width: 100%;
 	height: 6px;
+	/* afficher en priorité */
+	z-index: 100;
 }
 
 .line-menu.half {
