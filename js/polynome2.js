@@ -87,25 +87,26 @@ class Polynomes {
         let s = "";
         this.trim();
 
-        // cool ta vie la souffrance
-        // par contre j'ai changé ici pour qu'on affiche le coefficient
-        // même si l'arrondi de c donne 0, pour signifier que ces termes
-        // existent, même si petits + on affiche le signe
-        for (let i = c.length - 1; i >= 0; i--) {
-            let cr = Math.abs(c[i].toFixed(4));
-            let signe = Math.sign(c[i]);
+		// Affichage du polynome avec des puissances de 10 avec 2 chiffres significatifs maximum (arrondi)
+		// Format latex
+		for (let i = c.length - 1; i >= 0; i--) {
+			const puissance = Math.floor(Math.log10(Math.abs(c[i])));
+			const coeff = Math.round(c[i] / 10 ** puissance * 10) / 10;
+			const signe = Math.sign(c[i]);
+			const coeffAbs = Math.abs(coeff);
 
-            if (i == c.length - 1)
-                s += signe == 1 ? "" : "-";
-            else
-                s += signe == 1 ? " + " : " - ";
-            s += cr != 0 ? cr : 0;
-            s += i != 0 ? "x" : "";
-            s += i != 0 && i != 1 ? "^" + i : "";
+			// Si c'est le premier terme, on affiche le signe uniquement si le coefficient est négatif
+			if (i === c.length - 1) {
+				s += signe === -1 ? "~-~" : "~";
+			} else {
+				s += signe === 1 ? "~+~" : "~-~";
+			}
 
-            // note pour plus tard: ne plus utiliser java script
+			s += coeffAbs !== 0 ? coeffAbs + " \\cdot 10^{" + puissance + "}" : 0;
+			s += i !== 0 ? " \\cdot " : "";
+			s += i != 0 ? "x^{" + i + "}" : "";
 
-        }
+		}
 
         return s;
     }

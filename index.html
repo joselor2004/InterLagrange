@@ -6,27 +6,68 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Lagrange</title>
 
-	<!-- CANVAS -->
-	<canvas style="width:100%; height:100%" id="canvas" />	<!-- Canvas pour le rendu -->
 
 	<!-- SCRIPT -->
-    <script src="config.js"></script> 		<!-- Fichier avec les configurations -->
-    <script src="polynome.js"></script> 	<!-- Fichier avec le system de polynome -->
-    <script src="polynome2.js"></script> 	<!-- Fichier avec le system de polynome -->
-	<script src="boutons.js"></script>	    <!-- Fichier avec le sytem de bouton -->
-    <script src="lagrange.js"></script> 	<!-- Fichier principal -->
-    <div id="text"></div>
+    <script src="js/config.js"></script> 			<!-- Fichier avec les configurations -->
+    <script src="js/main.js"></script> 				<!-- Fichier principal -->
+
+    <script src="js/polynome.js"></script> 			<!-- Fichier avec le system de polynome -->
+    <script src="js/polynome2.js"></script> 		<!-- Fichier avec le system de polynome -->
+	<script src="js/boutons.js"></script>	    	<!-- Fichier avec le sytem de bouton -->
+    <script src="js/panel.js"></script> 			<!-- Fichier panel -->
+    <script src="js/lagrange.js"></script> 			<!-- Fichier lagrange -->
+
+
+	<!-- CSS -->
+	<link rel="stylesheet" href="css/main.css">
+
+	<!-- LATEX -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+
+
 
 </head>
-<body
-	style="
-		padding: 0;
-		margin: 0;
-		width:100%;
-		height:100%;
-		background-color: black;
-		"
->
+<body>
+
+
+	<!-- Panneau de configuration -->
+	<div class="panel" id="panel">
+		<div class="panelContent">
+			<h1>Interpolation de Lagrange</h1>
+
+			<!-- Affichage de la fonction -->
+			<div class="panelFonction">
+				<h2>Fonction</h2>
+				<button id="copy-button" title="Copy to clipboard" onclick={copyToClipboard()}>
+					<img src="images/copy.png" alt="Copy to clipboard">
+				</button>
+			</div>
+
+			<p class="functionText" ><span id="fonction"></span></p>
+
+
+			<!-- Bouton pour reset -->
+			
+
+		</div>
+	</div>
+
+	<!-- Bouton Pannel -->
+	<div class="panelButton" id="pannelButton">
+		<div class="line-menu half start"></div>
+		<div class="line-menu"></div>
+		<div class="line-menu half end"></div>
+	</div>
+
+
+
+	<div class="canvasDiv">
+		<canvas id="canvas" />		<!-- Canvas pour le rendu -->
+	</div>
+
+
+
 
 
 </body>

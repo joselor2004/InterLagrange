@@ -6,9 +6,6 @@
 //
 // -----------------------------------------------------------------------------
 
-// Alban dsl j'ai retiré un peu de ton code sans
-// te demander mais s'était vrm plus simple avec les
-// classes et en plus je comprenais rien quand tu fais .map
 
 function interpolateur(x, i) {
     let l = new Polynomes([1]);
@@ -57,7 +54,7 @@ function random_interpolation()
         }
     }
     eval_and_draw();
-    draw_interface();
+    refresh_interface();
 }
 
 // Permet d'afficher un point
@@ -96,14 +93,10 @@ function eval_and_draw() {
     }
 }
 
-function draw_interface()
+function refresh_interface()
 {
-    // alban stp j'ai copié ça sur internet
-    // mais j'arrive pas à grossir le text
-    ctx.fillText(P.print(), 20, 50);
-
-    for (let i = 0; i < boutons.length; i++)
-        boutons[i].draw();
+	// Récupération du <p> id="fonction" et on remplace son contenu par la fonction
+	katex.render("y =" + P.print(), document.getElementById("fonction"));
 }
 
 // Permet de générer les abscisses
@@ -160,29 +153,39 @@ function catch_existing(x, y) {
     return n;
 }
 
-var canvas = document.getElementById('canvas');
-var ctx = canvas.getContext('2d');
+
 
 function set_size() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 }
 
-set_size();
+// Permet de tout supprimer
+function clear() {
+	console.log('test')
+	xi = [];
+	yi = [];
+	P = new Polynomes([0]);
+	eval_and_draw();
+	console.log('test')
+}
+
+
 window.onresize = _ => set_size();
 
-let xi = [];
-let yi = [];
-let boutons = [];
-let dx = generate_dx();
-let held = -1;
-let is_holding = false;
-let P = new Polynomes([0]);
+var xi = [];
+var yi = [];
+var boutons = [];
+var dx = generate_dx();
+var held = -1;
+var is_holding = false;
+var P = new Polynomes([0]);
 
-boutons.push(new Bouton(70, 70, 70, 70, random_interpolation, "white"));
-draw_interface();
+// boutons.push(new Bouton(70, 70, 70, 70, random_interpolation, "white")); // Je rajouterais cette fonctionnionalité directement sur le panel
+// draw_interface();
 
-window.onmousedown = e => {
+
+function mouseDown(e) {
     for (let i = 0; i < boutons.length; i++)
     {
         if (boutons[i].is_inside(e.x, e.y))
@@ -201,7 +204,7 @@ window.onmousedown = e => {
     }
 
     eval_and_draw();
-    draw_interface();
+    refresh_interface();
 
     is_holding = true;
 }
@@ -215,7 +218,7 @@ window.onmousemove = e => {
         xi[held] = save_x(e.x);
         yi[held] = y;
         eval_and_draw();
-        draw_interface();
+        refresh_interface();
     }
 }
 
@@ -227,5 +230,5 @@ window.onmouseup = _ => {
     held = -1;
     is_holding = false;
     eval_and_draw();
-    draw_interface();
+    refresh_interface();
 }
