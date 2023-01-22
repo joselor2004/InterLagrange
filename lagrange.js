@@ -1,156 +1,231 @@
 // -----------------------------------------------------------------------------
 // Les paramètres constants sont définie dans le fichier config.js
-// 
-// Les fonctions pour faire les opérations sur les polynomes 
+//
+// Les fonctions pour faire les opérations sur les polynomes
 // sont dans le fichier polynome.js
 //
 // -----------------------------------------------------------------------------
 
+// Alban dsl j'ai retiré un peu de ton code sans
+// te demander mais s'était vrm plus simple avec les
+// classes et en plus je comprenais rien quand tu fais .map
 
+function interpolateur(x, i) {
+    let l = new Polynomes([1]);
+    for (let j = 0; j < x.length; j++) {
+        if (j != i) {
+            let t = new Polynomes([
+                - x[j] / (x[i] - x[j]),
+                1 / (x[i] - x[j]),
+            ])
 
-// Interpolateur
-function L(array_x, i) {
-	const polynomes = array_x.map(k => {
-		if (array_x[i] === k) {
-			return [1]; // Polynome constant = 1
-		}
+            l.mult(t);
+        }
+    }
 
-		return [
-			-k / (array_x[i] - k), 		// Coefficient de X^0
-			1 / (array_x[i] - k)		// Coefficient de X^1
-		]								// (X^0 - k) / (array_x[i] - k);
-	});
-
-	return produit_p(polynomes); // Retourne le i-ieme polynomes interpolateurs de Lagrange
+    return l;
 }
 
-// Interpolation de lagrange
-function inter_Lagrange(array_x, array_y, x) {
-	let sumProd = [0];
+function interpolation(x, y) {
+    let P = new Polynomes();
+    for (let i = 0; i < y.length; i++) {
+        let yi = new Polynomes([y[i]]);
+        yi.mult(interpolateur(x, i));
+        P.add(yi);
+    }
 
-	for (let k = 0; k < array_x.length; k++) {
-		let poly = L(array_x, k);
-		poly = produit_p([
-			[array_y[k]], // Constante
-			poly
-		])
+    return P;
+}
 
-		sumProd = somme_p([poly, sumProd]); // On ajoute tout les polynome (on en fait qu'un)
-	}
-
-	return eval_p(sumProd, x);
+// version un peu primitive d'un truc pour randomizer un polynôme
+// de plus haut degré ( faudrait pouvoir enlever les points ensuite 
+// et ne pas afficher les points randoms à l'écran )
+function random_interpolation()
+{
+    let i = 0;
+    // le 5 est vrm au pif
+    let n = 5 * Math.random();
+    while (i < n)
+    {
+        let x = window.innerWidth * Math.random();
+        if (!(x in xi))
+        {
+            let y = calibre(window.innerHeight * Math.random());
+            xi.push(x);
+            yi.push(y);
+            i++;
+        }
+    }
+    eval_and_draw();
+    draw_interface();
 }
 
 // Permet d'afficher un point
 function point(x, y) {
-	ctx.beginPath();
-	ctx.arc(x, y, POINT_RADIUS, 0, 2 * Math.PI, true);
-	ctx.fill();
+    ctx.beginPath();
+    ctx.arc(x, y, POINT_RADIUS, 0, 2 * Math.PI, true);
+    ctx.fill();
 }
 
 // Permet d'afficher une ligne
 function draw_line(x, y, x2, y2) {
-	ctx.beginPath();
-	ctx.moveTo(x, window.innerHeight - y);
-	ctx.lineTo(x2, window.innerHeight - y2);
+    ctx.beginPath();
+    ctx.moveTo(x, window.innerHeight - y);
+    ctx.lineTo(x2, window.innerHeight - y2);
 
-	ctx.stroke();
-}
-
-// Permet d'afficher une fonction
-function draw_function(f, dx) {
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	for (let i = 1; i < N_POINTS; i++) {
-		draw_line(dx[i - 1], f[i - 1], dx[i], f[i]);
-	}
+    ctx.stroke();
 }
 
 // Permet de calculer et d'afficher la fonction
-function eval_and_draw(f, dx) {
-	for (let i = 0; i < N_POINTS; i++) {
-		let val = inter_Lagrange(xi, yi, dx[i]);
-		f.push(val);
-	}
+function eval_and_draw() {
+    P = interpolation(xi, yi);
+    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    for (let i = 1; i < N_POINTS; i++) {
+        let a = P.eval(dx[i - 1]);
+        let b = P.eval(dx[i]);
+        draw_line(dx[i - 1], a, dx[i], b);
+    }
 
-	ctx.strokeStyle = "white";
-	draw_function(f, dx);
-	for (let i = 0; i < xi.length; i += 1) {
-		if (held_point == i)
-			ctx.fillStyle = "red";
-		else
-			ctx.fillStyle = "white";
-		point(xi[i], window.innerHeight - yi[i]);
-	}
+    ctx.strokeStyle = "white";
+    for (let i = 0; i < xi.length; i++) {
+        if (held == i)
+            ctx.fillStyle = "red";
+        else
+            ctx.fillStyle = "white";
+        point(xi[i], window.innerHeight - yi[i]);
+    }
+}
+
+function draw_interface()
+{
+    // alban stp j'ai copié ça sur internet
+    // mais j'arrive pas à grossir le text
+    ctx.fillText(P.print(), 20, 50);
+
+    for (let i = 0; i < boutons.length; i++)
+        boutons[i].draw();
 }
 
 // Permet de générer les abscisses
 function generate_dx() {
-	let out = [];
-	for (let i = 0; i < N_POINTS; i++) {
-		out.push(window.innerWidth * i / N_POINTS);
-	}
-	return out;
+    let out = [];
+    for (let i = 0; i < N_POINTS; i++) {
+        out.push(window.innerWidth * i / N_POINTS);
+    }
+    return out;
+}
+
+// Celui qui comprend pas c une pute
+function distance_carre(x1, y1, x2, y2) {
+    return (x1 - x2) ** 2 + (y1 - y2) ** 2;
+}
+
+function save_x(x) {
+    let d = 0;
+    let n = xi.length;
+
+    function x_exist(x) {
+        for (let i = 0; i < n - 1; i++) {
+            if (xi[i] == x) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    while (x_exist(x + d)) {
+        d++;
+    }
+
+    return x + d;
+}
+
+// On est armés, chargés, calibrés
+function calibre(y) {
+    return window.innerHeight - y;
+}
+
+function catch_existing(x, y) {
+    let n = xi.length;
+
+    for (let i = 0; i < n; i++) {
+        let d = distance_carre(x, y, xi[i], yi[i]);
+        if (d <= CLICK_RADIUS ** 2) {
+            is_holding = true;
+            return i;
+        }
+    }
+
+    return n;
 }
 
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-let f = [];
-let xi = [];
-let yi = [];
-let dx = generate_dx();
-let held_point = -1;
-let is_holding = false;
-
-function distance_euclidienne(x1, y1, x2, y2) {
-    return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
+function set_size() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 }
 
-window.onmousedown = e => {
-    let n = xi.length;
+set_size();
+window.onresize = _ => set_size();
 
-    // attraper un point déjà posé
-    for(let i = 0; i < n; i++) {
-        let d = distance_euclidienne(xi[i], yi[i], e.x, window.innerHeight - e.y);
-        if (d < POINT_RADIUS && !xi.includes(e.x)) {
-            held_point = i;
-            is_holding = true;
-            console.log("je prend le controle de " + i);
+let xi = [];
+let yi = [];
+let boutons = [];
+let dx = generate_dx();
+let held = -1;
+let is_holding = false;
+let P = new Polynomes([0]);
+
+boutons.push(new Bouton(70, 70, 70, 70, random_interpolation, "white"));
+draw_interface();
+
+window.onmousedown = e => {
+    for (let i = 0; i < boutons.length; i++)
+    {
+        if (boutons[i].is_inside(e.x, e.y))
+        {
+            boutons[i].func();
+            return;
         }
     }
+    let y = calibre(e.y);
+    let n = xi.length;
+    held = catch_existing(e.x, y);
 
-
-    if (!is_holding && !xi.includes(e.x)) {
-        is_holding = true;
-        held_point = xi.length;
+    if (held == n) {
         xi.push(e.x);
-        yi.push(window.innerHeight - e.y);
+        yi.push(y);
     }
+
+    eval_and_draw();
+    draw_interface();
+
+    is_holding = true;
 }
 
 window.onmousemove = e => {
-	if (held_point != -1 && is_holding) {
-		f = []
-		point(e.x, e.y);
+    let x = save_x(e.x)
+    let y = window.innerHeight - e.y;
 
-		xi[held_point] = e.x;
-		yi[held_point] = window.innerHeight - e.y;
-		f = []
-		eval_and_draw(f, dx);
-	}
+    if (held >= 0 && is_holding) {
+        point(x, y);
+        xi[held] = save_x(e.x);
+        yi[held] = y;
+        eval_and_draw();
+        draw_interface();
+    }
 }
 
-window.onmouseup = e => {
-
+window.onmouseup = _ => {
     if (!is_holding) {
         return false;
     }
 
-    held_point = -1;
-    eval_and_draw(f, dx);
+    held = -1;
     is_holding = false;
-    f = []
+    eval_and_draw();
+    draw_interface();
 }
