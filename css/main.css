@@ -39,7 +39,7 @@ canvas {
 	left: 0;
 	background-color: white;
 	overflow-x: hidden;
-	transition: 330ms;
+	transition: 600ms;
 	z-index: 1;
 }
 
@@ -120,7 +120,7 @@ canvas {
 	flex-direction: column;
 	justify-content: space-between;
 	cursor: pointer;
-	transition: all 330ms ease-out;
+	transition: all 500ms ease-out;
 }
 
 .panelButton.open {
@@ -128,7 +128,7 @@ canvas {
 }
 
 .line-menu {
-	background-color: red;
+	background-color: white;
 	border-radius: 5px;
 	width: 100%;
 	height: 6px;
