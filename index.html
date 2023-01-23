@@ -43,11 +43,16 @@
 			<!-- Affichage de la fonction -->
 			<div class="panelFonction">
 				<h2>Fonction</h2>
+				<!-- Bouton pour copier -->
 				<button id="copy-button" title="Copy to clipboard" onclick={copyToClipboard()}>
 					<img src="images/copy.png" alt="Copy to clipboard">
 				</button>
+				<!-- Bouton pour randomiser -->
 				<button id ="random-button" title="Randomize points" onclick={random_interpolation()}>
 					<img src="images/refresh.png" alt="Randomize points">
+				<!-- Bouton pour intégrer ( peut être rajouter un slider pour changer la précision ) -->
+				<button id ="integrate-button" title="Integrate polynome" onclick={approx_integrale()}>
+					<img src="images/math-integral.png" alt="Integrate polynome">
 			</div>
 
 			<p class="functionText" ><span id="fonction"></span></p>

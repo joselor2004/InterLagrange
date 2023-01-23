@@ -36,16 +36,21 @@ function interpolation(x, y) {
 
 // Intégration à peu près, mais stylée, entre a et b
 // avec n rectangles d'approximation
-function approx_integrale(poly, a, b, n)
+let nbr_rect = 100;
+let rect = [];
+
+function approx_integrale()
 {
-    let d = a - b;
-    for (let i = 0; i < n - 1; i++)
+    rect = []
+    let d = window.innerWidth;
+    for (let i = 0; i < nbr_rect - 1; i++)
     {
-        let x = i / d;
-        let val = poly.eval(x);
-        ctx.fillStyle = "rgba(150, 150, 150)";
-        ctx.fillRect(x, val, 1 / d, val);
+        let x = d * i / nbr_rect;
+        let val = calibre(P.eval(x));
+        rect.push([x, val, d * 1 / nbr_rect, calibre(val)]);
     }
+    eval_and_draw();
+    refresh_interface();
 }
 
 // Fonction pour générer des points aléatoirement
@@ -87,7 +92,17 @@ function draw_line(x, y, x2, y2) {
 // Permet de calculer et d'afficher la fonction
 function eval_and_draw() {
     P = interpolation(xi, yi);
+    
     ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+    // On dessine les rect d'intégration
+    ctx.fillStyle = COULEUR_INTEGRATION;
+    for (let i = 0; i < rect.length; i++)
+    {
+        let rectangle = rect[i];
+        ctx.fillRect(rectangle[0], rectangle[1], rectangle[2], rectangle[3]);
+    }
+
     for (let i = 1; i < N_POINTS; i++) {
         let a = P.eval(dx[i - 1]);
         let b = P.eval(dx[i]);
@@ -214,6 +229,8 @@ function mouseMove(e) {
         point(x, y);
         xi[held] = save_x(e.x);
         yi[held] = y;
+        if (rect.length != 0)
+            approx_integrale();
         eval_and_draw();
         refresh_interface();
     }
@@ -226,6 +243,8 @@ function mouseUp() {
 
     held = -1;
     is_holding = false;
+    if (rect.length != 0)
+        approx_integrale();
     eval_and_draw();
     refresh_interface();
 }
