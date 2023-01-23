@@ -34,20 +34,43 @@ function interpolation(x, y) {
     return P;
 }
 
-// Intégration à peu près, mais stylée, entre a et b
+// Intégration à peu près, mais stylée
 // avec n rectangles d'approximation
-let nbr_rect = 100;
+let nbr_rect = 500;
 let rect = [];
+
+function triggerIntegration()
+{
+    integrating = !integrating;
+    eval_and_draw();
+    refresh_interface();
+}
 
 function approx_integrale()
 {
     rect = []
     let d = window.innerWidth;
-    for (let i = 0; i < nbr_rect - 1; i++)
+    for (let i = 0; i < nbr_rect; i++)
     {
         let x = d * i / nbr_rect;
         let val = calibre(P.eval(x));
         rect.push([x, val, d * 1 / nbr_rect, calibre(val)]);
+    }
+}
+
+// Ok dernière fonction, permet d'approcher n'importe
+// quelle fonction f passée en argument
+function approx_f(f, n)
+{
+    xi = [];
+    yi = [];
+    dx = generate_dx(n);
+    for (let i = 0; i < dx.length; i++)
+    {
+        let y = f(dx[i]);
+        console.log(y);
+        xi.push(dx[i]);
+        yi.push(y);
     }
     eval_and_draw();
     refresh_interface();
@@ -96,11 +119,15 @@ function eval_and_draw() {
     ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
     // On dessine les rect d'intégration
-    ctx.fillStyle = COULEUR_INTEGRATION;
-    for (let i = 0; i < rect.length; i++)
+    if (integrating)
     {
-        let rectangle = rect[i];
-        ctx.fillRect(rectangle[0], rectangle[1], rectangle[2], rectangle[3]);
+        approx_integrale();
+        ctx.fillStyle = COULEUR_INTEGRATION;
+        for (let i = 0; i < rect.length; i++)
+        {
+            let rectangle = rect[i];
+            ctx.fillRect(rectangle[0], rectangle[1], rectangle[2], rectangle[3]);
+        }
     }
 
     for (let i = 1; i < N_POINTS; i++) {
@@ -126,10 +153,10 @@ function refresh_interface()
 }
 
 // Permet de générer les abscisses
-function generate_dx() {
+function generate_dx(n) {
     let out = [];
-    for (let i = 0; i < N_POINTS; i++) {
-        out.push(window.innerWidth * i / N_POINTS);
+    for (let i = 0; i < n; i++) {
+        out.push(window.innerWidth * i / n);
     }
     return out;
 }
@@ -180,7 +207,6 @@ function catch_existing(x, y) {
 }
 
 
-
 function set_size() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -188,21 +214,18 @@ function set_size() {
 
 // Permet de tout supprimer
 function clear() {
-	console.log('test')
 	xi = [];
 	yi = [];
 	P = new Polynomes([0]);
 	eval_and_draw();
-	console.log('test')
 }
-
-
 
 var xi = [];
 var yi = [];
-var dx = generate_dx();
+var dx = generate_dx(N_POINTS);
 var held = -1;
 var is_holding = false;
+var integrating = false;
 var P = new Polynomes([0]);
 
 function mouseDown(e) {
@@ -229,8 +252,6 @@ function mouseMove(e) {
         point(x, y);
         xi[held] = save_x(e.x);
         yi[held] = y;
-        if (rect.length != 0)
-            approx_integrale();
         eval_and_draw();
         refresh_interface();
     }
@@ -243,8 +264,6 @@ function mouseUp() {
 
     held = -1;
     is_holding = false;
-    if (rect.length != 0)
-        approx_integrale();
     eval_and_draw();
     refresh_interface();
 }
