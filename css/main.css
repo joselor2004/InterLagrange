@@ -39,7 +39,7 @@ canvas {
 	left: 0;
 	background-color: white;
 	overflow-x: hidden;
-	transition: 1000ms;
+	transition: 500ms ease-out;
 	z-index: 1;
 }
 
@@ -121,7 +121,7 @@ canvas {
 	flex-direction: column;
 	justify-content: space-between;
 	cursor: pointer;
-	transition: all 1000ms ease-out;
+	transition: all 500ms ease-out;
 }
 
 .panelButton.open {
@@ -142,7 +142,7 @@ canvas {
 }
 
 .line-menu.start {
-	transition: transform 1000ms cubic-bezier(0.54, -0.81, 0.57, 0.57);
+	transition: transform 500ms cubic-bezier(0.54, -0.81, 0.57, 0.57);
 	transform-origin: right;
 }
 
@@ -152,7 +152,7 @@ canvas {
 
 .line-menu.end {
 	align-self: flex-end;
-	transition: transform 1000ms cubic-bezier(0.54, -0.81, 0.57, 0.57);
+	transition: transform 500ms cubic-bezier(0.54, -0.81, 0.57, 0.57);
 	transform-origin: left;
 }
 
@@ -161,5 +161,5 @@ canvas {
 }
 .phoneOpen .line-menu {
 	background-color: black;
-	transition: all 1000ms ease-out;
+	transition: all 500ms ease-out;
 }
