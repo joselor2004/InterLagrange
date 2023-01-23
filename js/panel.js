@@ -1,24 +1,31 @@
+function updatePanel() {
+	PHONE_USER = window.innerWidth <= 600;
+	PANEL_WIDTH = PHONE_USER ? window.innerWidth : 450;
+
+	const panelItem = document.getElementById("panel");
+	panelItem.style.left = - PANEL_WIDTH + "px";
+	panelItem.style.width = PANEL_WIDTH + "px";
+
+	PANELOPEN ? moveNav() : null; 
+}
+
+
 
 
 function moveNav() {
-	document.getElementById("panel").style.width = PANELOPEN ? "0px" : PANEL_WIDTH + "px";
+	document.getElementById("panel").style.left = PANELOPEN ? - PANEL_WIDTH + "px" : "0px";
 	document.getElementById('fonction').style.width = (PANEL_WIDTH - 20) + "px";
-	document.querySelector('.panelButton').style.left = PANELOPEN ?
-	"20px" :
-	window.innerWidth > 400 ?
-	PANEL_WIDTH + 20 + "px" :
-	window.innerWidth - 70 + "px";
 
-	// if (PANELOPEN && window.innerWidth <= 400) {
-	// 	document.getElementsByClassName('line-menu').foreach((e) => {
-	// 		e.style.color = "black";
-	// 		console.log(e)
-	// 	});
-	// }
+	const buttonItem = document.querySelector('.panelButton');
+	const lineButtonItems = document.getElementsByClassName("line-menu");
+	if (PHONE_USER) {
+		buttonItem.style.left = !PANELOPEN ? (window.innerWidth - 70) + "px" : "20px";
+		document.querySelector('.panelButton').classList.toggle('phoneOpen');
+	} else {
+		buttonItem.style.left = !PANELOPEN ? PANEL_WIDTH + 20 + "px" : "20px";
+	}
 
 	document.querySelector('.panelButton').classList.toggle('open');
-
-
 	PANELOPEN = !PANELOPEN;
 }
 

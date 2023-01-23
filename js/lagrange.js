@@ -171,7 +171,6 @@ function clear() {
 }
 
 
-window.onresize = _ => set_size();
 
 var xi = [];
 var yi = [];
@@ -209,7 +208,7 @@ function mouseDown(e) {
     is_holding = true;
 }
 
-window.onmousemove = e => {
+function mouseMove(e) {
     let x = save_x(e.x)
     let y = window.innerHeight - e.y;
 
@@ -222,7 +221,7 @@ window.onmousemove = e => {
     }
 }
 
-window.onmouseup = _ => {
+function mouseUp() {
     if (!is_holding) {
         return false;
     }
