@@ -13,7 +13,6 @@
 
     <script src="js/polynome.js"></script> 			<!-- Fichier avec le system de polynome -->
     <script src="js/polynome2.js"></script> 		<!-- Fichier avec le system de polynome -->
-	<script src="js/boutons.js"></script>	    	<!-- Fichier avec le sytem de bouton -->
     <script src="js/panel.js"></script> 			<!-- Fichier panel -->
     <script src="js/lagrange.js"></script> 			<!-- Fichier lagrange -->
 
@@ -47,6 +46,8 @@
 				<button id="copy-button" title="Copy to clipboard" onclick={copyToClipboard()}>
 					<img src="images/copy.png" alt="Copy to clipboard">
 				</button>
+				<button id ="random-button" title="Randomize points" onclick={random_interpolation()}>
+					<img src="images/refresh.png" alt="Randomize points">
 			</div>
 
 			<p class="functionText" ><span id="fonction"></span></p>

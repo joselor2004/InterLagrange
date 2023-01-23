@@ -8,7 +8,7 @@
 
 
 function interpolateur(x, i) {
-    let l = new Polynomes([1]);
+    let L = new Polynomes([1]);
     for (let j = 0; j < x.length; j++) {
         if (j != i) {
             let t = new Polynomes([
@@ -16,11 +16,11 @@ function interpolateur(x, i) {
                 1 / (x[i] - x[j]),
             ])
 
-            l.mult(t);
+            L.mult(t);
         }
     }
 
-    return l;
+    return L;
 }
 
 function interpolation(x, y) {
@@ -34,14 +34,25 @@ function interpolation(x, y) {
     return P;
 }
 
-// version un peu primitive d'un truc pour randomizer un polynôme
-// de plus haut degré ( faudrait pouvoir enlever les points ensuite 
-// et ne pas afficher les points randoms à l'écran )
+// Intégration à peu près, mais stylée, entre a et b
+// avec n rectangles d'approximation
+function approx_integrale(poly, a, b, n)
+{
+    let d = a - b;
+    for (let i = 0; i < n - 1; i++)
+    {
+        let x = i / d;
+        let val = poly.eval(x);
+        ctx.fillStyle = "rgba(150, 150, 150)";
+        ctx.fillRect(x, val, 1 / d, val);
+    }
+}
+
+// Fonction pour générer des points aléatoirement
 function random_interpolation()
 {
     let i = 0;
-    // le 5 est vrm au pif
-    let n = 5 * Math.random();
+    let n = RANDOM_POINTS * Math.random();
     while (i < n)
     {
         let x = window.innerWidth * Math.random();
@@ -51,10 +62,10 @@ function random_interpolation()
             xi.push(x);
             yi.push(y);
             i++;
+            eval_and_draw();
+            refresh_interface();
         }
     }
-    eval_and_draw();
-    refresh_interface();
 }
 
 // Permet d'afficher un point
@@ -174,25 +185,12 @@ function clear() {
 
 var xi = [];
 var yi = [];
-var boutons = [];
 var dx = generate_dx();
 var held = -1;
 var is_holding = false;
 var P = new Polynomes([0]);
 
-// boutons.push(new Bouton(70, 70, 70, 70, random_interpolation, "white")); // Je rajouterais cette fonctionnionalité directement sur le panel
-// draw_interface();
-
-
 function mouseDown(e) {
-    for (let i = 0; i < boutons.length; i++)
-    {
-        if (boutons[i].is_inside(e.x, e.y))
-        {
-            boutons[i].func();
-            return;
-        }
-    }
     let y = calibre(e.y);
     let n = xi.length;
     held = catch_existing(e.x, y);

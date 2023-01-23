@@ -71,6 +71,18 @@ class Polynomes {
         this.coefs.pop();
     }
 
+    // Fonction qui spoiler, primitive avec une condition initiale
+    primitive(condInit)
+    {
+        this.coefs.push(0);
+        let n = this.coefs.length;
+
+        for (let i = 1; i < n; i++)
+            this.coefs[i] = this.coefs[i - 1] / i;
+
+        this.coefs[0] = condInit;
+    }
+
     eval(x) {
         let s = 0;
         let c = this.coefs;
@@ -86,7 +98,7 @@ class Polynomes {
         let c = this.coefs;
         let s = "";
         this.trim();
-
+        
 		// Affichage du polynome avec des puissances de 10 avec 2 chiffres significatifs maximum (arrondi)
 		// Format latex
 		for (let i = c.length - 1; i >= 0; i--) {

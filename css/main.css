@@ -141,6 +141,7 @@ canvas {
 	width: 50%;
 }
 
+/*????? cubic bezier ????*/
 .line-menu.start {
 	transition: transform 500ms cubic-bezier(0.54, -0.81, 0.57, 0.57);
 	transform-origin: right;
