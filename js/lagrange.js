@@ -34,6 +34,22 @@ function interpolation(x, y) {
     return P;
 }
 
+function inter_Lagrange(x, array_x, array_y)
+{
+    let val = 0;
+    for (let k = 0; k < array_x.length; k++)
+    {
+        let L_k = 1;
+        for (let i = 0; i < array_x.length; i++)
+        {
+            if (i != k)
+                L_k *= (x - array_x[i]) / (array_x[k] - array_x[i]);
+        }
+        val += array_y[k] * L_k;
+    }
+    return val;
+}
+
 // Intégration à peu près, mais stylée
 // avec n rectangles d'approximation
 let nbr_rect = 500;
@@ -64,16 +80,15 @@ function approx_f(f, n)
 {
     xi = [];
     yi = [];
-    dx = generate_dx(n);
-    for (let i = 0; i < dx.length; i++)
+    let deltaX = generate_dx(n);
+    for (let i = 0; i < deltaX.length; i++)
     {
-        let y = f(dx[i]);
-        console.log(y);
-        xi.push(dx[i]);
+        let y = f(deltaX[i]);
+        xi.push(deltaX[i]);
         yi.push(y);
+        eval_and_draw();
+        refresh_interface();
     }
-    eval_and_draw();
-    refresh_interface();
 }
 
 // Fonction pour générer des points aléatoirement
@@ -131,8 +146,11 @@ function eval_and_draw() {
     }
 
     for (let i = 1; i < N_POINTS; i++) {
-        let a = P.eval(dx[i - 1]);
-        let b = P.eval(dx[i]);
+        // let a = P.eval(dx[i - 1]);
+        // let b = P.eval(dx[i]);
+        let a = inter_Lagrange(dx[i - 1], xi, yi);
+        let b = inter_Lagrange(dx[i], xi, yi);
+        ctx.strokeStyle = "white"
         draw_line(dx[i - 1], a, dx[i], b);
     }
 
@@ -218,6 +236,17 @@ function clear() {
 	yi = [];
 	P = new Polynomes([0]);
 	eval_and_draw();
+}
+
+// Une fonction random pour l'instant
+function func(x)
+{
+    return 200 * Math.exp(-1/300 * x) * Math.sin(1/50 * x) + 300;
+}
+
+function test()
+{
+    approx_f(func, 20);
 }
 
 var xi = [];
