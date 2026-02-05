@@ -150,8 +150,12 @@ function eval_and_draw() {
         // let b = P.eval(dx[i]);
         let a = inter_Lagrange(dx[i - 1], xi, yi);
         let b = inter_Lagrange(dx[i], xi, yi);
+		let c = func(dx[i-1]);
+		let d = func(dx[i]);
         ctx.strokeStyle = "white"
         draw_line(dx[i - 1], a, dx[i], b);
+		ctx.strokeStyle = "red"
+		draw_line(dx[i-1], c, dx[i], d);
     }
 
     ctx.strokeStyle = "white";
